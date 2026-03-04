@@ -47,6 +47,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <div className="p-4 border-b border-slate-200 dark:border-slate-800">
           <h1 className="text-lg font-bold text-slate-900 dark:text-white">DocPulse</h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Documentation Analytics</p>
+          <span className="inline-block mt-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800 rounded">Demo</span>
         </div>
 
         <div className="p-3">
