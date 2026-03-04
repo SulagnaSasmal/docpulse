@@ -1,0 +1,34 @@
+product: VaultPay
+features:
+  - name: Authentication
+    endpoints: [/auth/token, /auth/refresh, /auth/revoke]
+    doc_pages: ["/authentication"]
+    status: documented
+  - name: Charges
+    endpoints: [/charges, /charges/{id}, /charges/{id}/capture, /charges/{id}/refund]
+    doc_pages: ["/charges"]
+    status: partial
+  - name: Refunds
+    endpoints: [/refunds, /refunds/{id}]
+    doc_pages: ["/refunds"]
+    status: documented
+  - name: Disputes
+    endpoints: [/disputes, /disputes/{id}, /disputes/{id}/evidence]
+    doc_pages: []
+    status: partial
+  - name: 3D Secure
+    endpoints: [/3ds/initiate, /3ds/verify]
+    doc_pages: []
+    status: undocumented
+  - name: Webhooks
+    endpoints: [/webhooks, /webhooks/{id}]
+    doc_pages: ["/webhooks"]
+    status: documented
+  - name: Settlements
+    endpoints: [/settlements, /settlements/{id}]
+    doc_pages: ["/settlements"]
+    status: documented
+  - name: Payouts
+    endpoints: [/payouts, /payouts/{id}]
+    doc_pages: ["/payouts"]
+    status: partial
