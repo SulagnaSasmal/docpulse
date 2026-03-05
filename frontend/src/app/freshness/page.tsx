@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DashboardLayout } from "@/components/DashboardLayout";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+import { fetchAPI } from "@/lib/api";
 
 interface FreshnessFile {
   file: string;
@@ -30,16 +29,24 @@ export default function FreshnessPage() {
   const fetchFreshness = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ repo_owner: owner, repo_name: repo, docs_path: docsPath });
-      const res = await fetch(`${API_URL}/freshness?${params}`);
-      if (!res.ok) throw new Error("Failed");
-      setData(await res.json());
+      const d = await fetchAPI<FreshnessData>("/freshness", {
+        repo_owner: owner,
+        repo_name: repo,
+        docs_path: docsPath,
+      });
+      setData(d);
     } catch {
       setData(null);
     } finally {
       setLoading(false);
     }
   };
+
+  // Auto-load demo data on mount
+  useEffect(() => {
+    fetchFreshness();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const statusConfig: Record<string, { bg: string; text: string }> = {
     fresh: { bg: "bg-emerald-100 dark:bg-emerald-900/30", text: "text-emerald-700 dark:text-emerald-400" },

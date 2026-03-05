@@ -29,29 +29,34 @@ const demoPages = [
 ];
 
 const demoSearchQueries = [
-  { query: "how to authenticate", count: 342, results_found: true },
-  { query: "webhook signature verification", count: 287, results_found: true },
-  { query: "payment retry logic", count: 198, results_found: false },
-  { query: "idempotency key", count: 176, results_found: true },
-  { query: "sandbox credentials", count: 154, results_found: true },
-  { query: "rate limiting", count: 143, results_found: false },
-  { query: "batch payments", count: 132, results_found: false },
-  { query: "PCI compliance", count: 121, results_found: true },
-  { query: "error code 4012", count: 98, results_found: false },
-  { query: "currency conversion", count: 87, results_found: true },
+  { query: "how to authenticate", count: 342, results_found: true, min_results: 8 },
+  { query: "webhook signature verification", count: 287, results_found: true, min_results: 5 },
+  { query: "payment retry logic", count: 198, results_found: false, min_results: 0 },
+  { query: "idempotency key", count: 176, results_found: true, min_results: 3 },
+  { query: "sandbox credentials", count: 154, results_found: true, min_results: 6 },
+  { query: "rate limiting", count: 143, results_found: false, min_results: 0 },
+  { query: "batch payments", count: 132, results_found: false, min_results: 0 },
+  { query: "PCI compliance", count: 121, results_found: true, min_results: 4 },
+  { query: "error code 4012", count: 98, results_found: false, min_results: 0 },
+  { query: "currency conversion", count: 87, results_found: true, min_results: 2 },
 ];
 
 const demoCoverage = {
+  product: "VaultPay API",
   overall_score: 78,
+  total_features: 8,
+  documented: 5,
+  partial: 2,
+  undocumented: 1,
   features: [
-    { feature: "Authentication", endpoints: "POST /auth/token, POST /auth/refresh", doc_page: "/docs/authentication", status: "documented" },
-    { feature: "Payments", endpoints: "POST /payments, GET /payments/{id}", doc_page: "/docs/payments/create", status: "documented" },
-    { feature: "Webhooks", endpoints: "POST /webhooks, DELETE /webhooks/{id}", doc_page: "/docs/webhooks", status: "documented" },
-    { feature: "Refunds", endpoints: "POST /refunds, GET /refunds/{id}", doc_page: "/docs/refunds", status: "documented" },
-    { feature: "Disputes", endpoints: "POST /disputes/respond", doc_page: "/docs/disputes", status: "partial" },
-    { feature: "Settlements", endpoints: "GET /settlements, GET /settlements/{id}", doc_page: "/docs/settlements", status: "documented" },
-    { feature: "Batch Payments", endpoints: "POST /batch, GET /batch/{id}", doc_page: "", status: "undocumented" },
-    { feature: "3D Secure", endpoints: "POST /3ds/authenticate", doc_page: "/docs/3d-secure", status: "partial" },
+    { name: "Authentication", endpoints: ["POST /auth/token", "POST /auth/refresh"], doc_pages: ["/docs/authentication"], status: "documented" },
+    { name: "Payments", endpoints: ["POST /payments", "GET /payments/{id}"], doc_pages: ["/docs/payments/create"], status: "documented" },
+    { name: "Webhooks", endpoints: ["POST /webhooks", "DELETE /webhooks/{id}"], doc_pages: ["/docs/webhooks"], status: "documented" },
+    { name: "Refunds", endpoints: ["POST /refunds", "GET /refunds/{id}"], doc_pages: ["/docs/refunds"], status: "documented" },
+    { name: "Disputes", endpoints: ["POST /disputes/respond"], doc_pages: ["/docs/disputes"], status: "partial" },
+    { name: "Settlements", endpoints: ["GET /settlements", "GET /settlements/{id}"], doc_pages: ["/docs/settlements"], status: "documented" },
+    { name: "Batch Payments", endpoints: ["POST /batch", "GET /batch/{id}"], doc_pages: [], status: "undocumented" },
+    { name: "3D Secure", endpoints: ["POST /3ds/authenticate"], doc_pages: ["/docs/3d-secure"], status: "partial" },
   ],
 };
 
@@ -92,15 +97,17 @@ export function getDemoData(path: string, params: Record<string, string> = {}): 
   }
 
   if (path === "/search/queries") {
-    return { queries: demoSearchQueries.filter(q => q.results_found), total: 7 };
+    return demoSearchQueries.filter(q => q.results_found);
   }
 
   if (path === "/search/failed") {
-    return { queries: demoSearchQueries.filter(q => !q.results_found), total: 4 };
+    return demoSearchQueries.filter(q => !q.results_found);
   }
 
   if (path === "/search/stats") {
-    return { total_searches: 1538, unique_queries: 432, zero_result_rate: 0.26, avg_results: 3.4 };
+    const failed = demoSearchQueries.filter(q => !q.results_found).length;
+    const total = demoSearchQueries.length;
+    return { total_searches: 1538, failed_searches: failed * 38, success_rate: Math.round((1 - failed / total) * 100) };
   }
 
   if (path === "/coverage") {
@@ -108,8 +115,11 @@ export function getDemoData(path: string, params: Record<string, string> = {}): 
   }
 
   if (path === "/freshness") {
-    const avg = 68;
-    return { repo: "SulagnaSasmal/vaultpay-api-docs", files: demoFreshness, overall_score: avg };
+    return { repo: "SulagnaSasmal/vaultpay-api-docs", files: demoFreshness, overall_score: 68 };
+  }
+
+  if (path === "/reports/weekly") {
+    return "demo_report";
   }
 
   return null;
